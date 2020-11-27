@@ -28,9 +28,9 @@ public class Task1 {
         System.out.println();
         System.out.println("Количество строк " + count);
         System.out.println();
-        System.out.println(max + " " + max.length());
+        System.out.println("Самая длинная строка " + max + " " + max.length() + " символ(-а/ов)");
         System.out.println();
-        System.out.println(min + " " + min.length());
+        System.out.println("Самая короткая строка " + min + " " + min.length() + " символ(-а/ов)");
 
     }
 }
