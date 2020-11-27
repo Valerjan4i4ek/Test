@@ -1,0 +1,36 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Task1 {
+    public static void main(String[] args) throws IOException {
+        System.out.println("Введите, пожалуйста, строки текста. Для завершения введите 'конец' ");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        String s = "";
+        List<String> list = new ArrayList<>();
+        int count = 0;
+
+        while (!s.equals("конец")){
+            s = reader.readLine();
+            list.add(s);
+
+        }
+        for (int i = 0; i < list.size()-1; i++) {
+            System.out.println(list.get(i));
+            count++;
+        }
+        String max = Collections.max(list);
+        String min = Collections.min(list);
+        System.out.println();
+        System.out.println("Количество строк " + count);
+        System.out.println();
+        System.out.println(max + " " + max.length());
+        System.out.println();
+        System.out.println(min + " " + min.length());
+
+    }
+}
