@@ -1,0 +1,77 @@
+import java.io.*;
+import java.util.*;
+
+public class Person {
+    String name;
+    int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public static void main(String[] args) throws IOException {
+        File f = new File("d:/trololo.txt");
+        Comparator<Person> pcomp = new PersonAgeComparator().thenComparing(new PersonNameComparator());
+        TreeSet<Person> setPerson = new TreeSet(pcomp);
+        List<String> listPeson = new ArrayList<>();
+        Scanner scn = new Scanner(f);
+        Person person;
+        while(scn.hasNext()) {
+            String name = scn.next();
+            int age = scn.nextInt();
+            person = new Person(name, age);
+            setPerson.add(person);
+            listPeson.add(person.getName());
+        }
+
+        for(Person p : setPerson){
+            System.out.println(p.getAge() + " " + p.getName());
+        }
+        System.out.println();
+
+
+        Set<String> uniqueSet = new TreeSet<>(listPeson);
+        for (String temp : uniqueSet) {
+            System.out.println(temp + ": " + Collections.frequency(listPeson, temp));
+        }
+
+
+    }
+
+}
+class PersonNameComparator implements Comparator<Person>{
+
+    public int compare(Person a, Person b){
+
+        return a.getName().compareTo(b.getName());
+    }
+}
+class PersonAgeComparator implements Comparator<Person>{
+
+    public int compare(Person a, Person b){
+
+        if(a.getAge()> b.getAge())
+            return 1;
+        else if(a.getAge()< b.getAge())
+            return -1;
+        else
+            return 0;
+    }
+}
