@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Task1 {
@@ -23,12 +22,20 @@ public class Task1 {
                 list.add(s);
             }
         }
+        String max = list.get(0);
+        String min = list.get(0);
         for (int a = 0; a < list.size(); a++){
             System.out.println(list.get(a));
+            if (max.length() < list.get(a).length()){
+                max = list.get(a);
+            }
+            if (min.length() > list.get(a).length()){
+                min = list.get(a);
+            }
         }
 
-        String max = Collections.max(list);
-        String min = Collections.min(list);
+//        String max = Collections.max(list);
+//        String min = Collections.min(list);
         System.out.println();
         System.out.println("Количество строк " + count);
         System.out.println();
