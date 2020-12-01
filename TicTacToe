@@ -14,8 +14,7 @@ public class TicTacToe {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String menu = reader.readLine();
         TicTacToe ticTacToe = new TicTacToe();
-        File file = new File("d:/tictactoe.txt");
-        FileWriter writer = new FileWriter(file, false);
+        
 
         if(menu.equals("1")){
             System.out.println("Введите имена игроков");
@@ -23,7 +22,7 @@ public class TicTacToe {
             String oPlayer = reader.readLine();
             if(!xPlayer.isEmpty() && !oPlayer.isEmpty()){
                 ticTacToe.game();
-                writer.write(String.valueOf(ticTacToe));
+                
             }
         }
         else if(menu.equals("2")){
