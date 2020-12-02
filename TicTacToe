@@ -23,7 +23,7 @@ public class TicTacToe{
                 if(again.equalsIgnoreCase("y")){
                     game.game(xPlayer, oPlayer);
                 }
-                else{
+                else if(again.equalsIgnoreCase("n")){
                     System.exit(0);
                 }
             }
