@@ -1,0 +1,91 @@
+import java.util.*;
+import static java.lang.System.out;
+
+public class Game1 {
+
+    private final static String SIGN_PLANT = "X";//семена
+    private final static String SIGN_EMPTY = "_";
+    private final static String SIGN_HARVEST = "0";//урожай
+
+    private final Scanner scanner;
+    private final Plant plant;
+
+    private final List<String> field;
+
+    private int cash;
+
+
+    public Game1(Plant plant, int cash, int fieldSize) {
+        this.cash = cash;
+        this.plant = plant;
+        this.scanner = new Scanner(System.in);
+        this.field = new ArrayList<>();
+        for (int i = 0; i < fieldSize; i++) field.add(SIGN_EMPTY);
+    }
+
+    public void start() {
+        while (true) {
+            out.println(field);
+            out.println("YOUR CASH : " + cash);
+            out.println("Enter cell for your plant (1-8)");
+            valid(scanner.nextLine()).ifPresent(fieldNumber -> {
+                if (SIGN_EMPTY.equals(field.get(fieldNumber))) {
+                    field.set(fieldNumber, SIGN_PLANT);
+                    execute(() -> getHarvest(fieldNumber), plant.getTime());
+                    cash -= plant.getSeedPrice();
+                }
+                else {
+                    field.set(fieldNumber, SIGN_EMPTY);
+                    cash += plant.getHarvestPrice();
+                }
+            });
+        }
+    }
+
+    private Optional<Integer> valid(String userInput) {
+        try{
+            Integer fieldNumber = Integer.valueOf(userInput)-1;
+            if (isFieldFull()) {
+                return printAndReturnOptional("JUST WAIT");
+            }
+            if (fieldNumber < 0 || fieldNumber >= field.size()) {
+                return printAndReturnOptional("OLOLO! YOU WERE ABROAD");
+            }
+            if (cash < plant.getSeedPrice()) {
+                return printAndReturnOptional("YOU HAVEN'T ENOUGH MONEY");
+            }
+            if (SIGN_PLANT.equals(field.get(fieldNumber))) {
+                return printAndReturnOptional("OLOLO! FIELD NOT EMPTY");
+            }
+            return Optional.of(fieldNumber);
+        }catch(NumberFormatException e){
+            return printAndReturnOptional("OLOLO! INCORRECT INPUT");
+        }
+    }
+    private Optional printAndReturnOptional(String arg) {
+        out.println(arg);
+        return Optional.empty();
+    }
+
+    public void getHarvest(int fieldNumber) {
+        field.set(fieldNumber, SIGN_HARVEST);
+        out.println(field);
+    }
+
+    private void execute(Runnable task, long delaySec) {
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                task.run();
+                timer.cancel();
+            }
+        };
+        timer.schedule(timerTask, delaySec * 1000);
+    }
+
+    private boolean isFieldFull() {
+        return !field.stream().anyMatch(cell->SIGN_EMPTY.equals(cell));
+    }
+
+}
