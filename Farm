@@ -1,0 +1,7 @@
+public class Farm {
+    public static void main(String[] args) {
+        Plant plant = new Plant("Cucumber", 10, 15, 5);
+        new Game(plant, 100 , 8).start();
+    }
+
+}
