@@ -1,44 +1,84 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import static java.lang.System.out;
 
 public class Game1 {
 
-    private final static String SIGN_PLANT = "X";//семена
+    private final static String SIGN_CUCUMBER = "C";//семена огурцов
+    private final static String SIGN_TOMATO = "T"; //семена тоамтов
     private final static String SIGN_EMPTY = "_";
-    private final static String SIGN_HARVEST = "0";//урожай
+    private final static String SIGN_HARVEST_C = "0C";//урожай
+    private final static String SIGN_HARVEST_T = "0T";//урожай
 
     private final Scanner scanner;
-    private final Plant plant;
+    private final BufferedReader reader;
+    private final Cucumber cucumber;
+    private final Tomato tomato;
 
     private final List<String> field;
 
     private int cash;
 
 
-    public Game1(Plant plant, int cash, int fieldSize) {
+    public Game1(Tomato tomato, Cucumber cucumber, int cash, int fieldSize) {
         this.cash = cash;
-        this.plant = plant;
+        //this.plant = plant;
+        this.cucumber = cucumber;
+        this.tomato = tomato;
         this.scanner = new Scanner(System.in);
+        this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.field = new ArrayList<>();
         for (int i = 0; i < fieldSize; i++) field.add(SIGN_EMPTY);
     }
 
-    public void start() {
+    public void start() throws IOException {
         while (true) {
             out.println(field);
             out.println("YOUR CASH : " + cash);
-            out.println("Enter cell for your plant (1-8)");
-            valid(scanner.nextLine()).ifPresent(fieldNumber -> {
-                if (SIGN_EMPTY.equals(field.get(fieldNumber))) {
-                    field.set(fieldNumber, SIGN_PLANT);
-                    execute(() -> getHarvest(fieldNumber), plant.getTime());
-                    cash -= plant.getSeedPrice();
-                }
-                else {
-                    field.set(fieldNumber, SIGN_EMPTY);
-                    cash += plant.getHarvestPrice();
-                }
-            });
+            out.println("C - plant Cucumber, T - plant Tomato, G - get Harvest");
+            switch (reader.readLine()){
+                case "C":
+                    out.println("Enter cell for your plant (1-8)");
+                    valid(scanner.nextLine()).ifPresent(fieldNumber -> {
+                        if (SIGN_EMPTY.equals(field.get(fieldNumber))) {
+                            field.set(fieldNumber, SIGN_CUCUMBER);
+                            execute(() -> getHarvestCucumber(fieldNumber), cucumber.getTime());
+                            cash -= cucumber.getSeedPrice();
+                        }
+                    });
+                    break;
+                case "T":
+                    out.println("Enter cell for your plant (1-8)");
+                    valid(scanner.nextLine()).ifPresent(fieldNumber -> {
+                        if (SIGN_EMPTY.equals(field.get(fieldNumber))) {
+                            field.set(fieldNumber, SIGN_TOMATO);
+                            execute(() -> getHarvestTomato(fieldNumber), tomato.getTime());
+                            cash -= tomato.getSeedPrice();
+                        }
+                    });
+                    break;
+                case "G":
+                    out.println("Enter cell for your plant (1-8)");
+                    valid(scanner.nextLine()).ifPresent(fieldNumber ->{
+                        if(SIGN_HARVEST_C.equals(field.get(fieldNumber))){
+                            field.set(fieldNumber, SIGN_EMPTY);
+                            cash += cucumber.getHarvestPrice();
+                        }
+                        else if((SIGN_HARVEST_T.equals(field.get(fieldNumber)))) {
+                            field.set(fieldNumber, SIGN_EMPTY);
+                            cash += tomato.getHarvestPrice();
+                        }
+                        else {
+                            out.println("NO ONE HARVEST HERE");
+                        }
+                    });
+                    break;
+
+                default:
+                    out.println("fff");
+            }
         }
     }
 
@@ -51,10 +91,11 @@ public class Game1 {
             if (fieldNumber < 0 || fieldNumber >= field.size()) {
                 return printAndReturnOptional("OLOLO! YOU WERE ABROAD");
             }
-            if (cash < plant.getSeedPrice()) {
+            if (cash < cucumber.getSeedPrice() || cash < tomato.getSeedPrice()) {
                 return printAndReturnOptional("YOU HAVEN'T ENOUGH MONEY");
             }
-            if (SIGN_PLANT.equals(field.get(fieldNumber))) {
+            if (SIGN_CUCUMBER.equals(field.get(fieldNumber)) ||
+                    SIGN_TOMATO.equals(field.get(fieldNumber))) {
                 return printAndReturnOptional("OLOLO! FIELD NOT EMPTY");
             }
             return Optional.of(fieldNumber);
@@ -67,8 +108,12 @@ public class Game1 {
         return Optional.empty();
     }
 
-    public void getHarvest(int fieldNumber) {
-        field.set(fieldNumber, SIGN_HARVEST);
+    public void getHarvestCucumber(int fieldNumber) {
+        field.set(fieldNumber, SIGN_HARVEST_C);
+        out.println(field);
+    }
+    public void getHarvestTomato(int fieldNumber) {
+        field.set(fieldNumber, SIGN_HARVEST_T);
         out.println(field);
     }
 
