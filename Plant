@@ -1,8 +1,19 @@
+import com.google.gson.Gson;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+
 public class Plant{
     private String name;
     private int seedPrice;
     private int harvestPrice;
     private long time;
+
+    public Plant(){}
 
     public Plant(String name, int seedPrice, int harvestPrice, long time) {
         this.name = name;
@@ -10,6 +21,39 @@ public class Plant{
         this.harvestPrice = harvestPrice;
         this.time = time;
     }
+
+    public ArrayList<Plant> readFromJsonFile(String fileName){
+        ArrayList<Plant> plantList = new ArrayList<>();
+
+        try{
+            String text = new String(Files.readAllBytes(Paths.get(fileName).toAbsolutePath()), StandardCharsets.UTF_8);
+
+            JSONObject obj = new JSONObject(text);
+            JSONArray arr = obj.getJSONArray("plants");
+
+            for (int i = 0; i < arr.length(); i++) {
+                String name = arr.getJSONObject(i).getString("name");
+                int seedPrice = Integer.parseInt(String.valueOf(arr.getJSONObject(i).getInt("seedPrice")));
+                int harvestPrice = Integer.parseInt(String.valueOf(arr.getJSONObject(i).getInt("harvestPrice")));
+                long time = Long.parseLong(String.valueOf(arr.getJSONObject(i).getLong("time")));
+                plantList.add(new Plant(name, seedPrice, harvestPrice, time));
+            }
+        } catch(Exception ex){
+            System.out.println(ex.toString());
+        }
+        return plantList;
+    }
+
+    @Override
+    public String toString() {
+        return "Plant{" +
+                "name='" + name + '\'' +
+                ", seedPrice=" + seedPrice +
+                ", harvestPrice=" + harvestPrice +
+                ", time=" + time +
+                '}';
+    }
+//Gson gson = new Gson();
 
     public String getName() {
         return name;
