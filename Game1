@@ -1,32 +1,33 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import static java.lang.System.out;
 
-public class Game1 {
+public class Game {
 
-    private final static String SIGN_CUCUMBER = "C";//семена огурцов
-    private final static String SIGN_TOMATO = "T"; //семена тоамтов
+    private final static String SIGN_PLANT = "X";//семена огурцов
     private final static String SIGN_EMPTY = "_";
-    private final static String SIGN_HARVEST_C = "0C";//урожай
-    private final static String SIGN_HARVEST_T = "0T";//урожай
+    private final static String SIGN_HARVEST = "0";//урожай
 
     private final Scanner scanner;
     private final BufferedReader reader;
-    private final Cucumber cucumber;
-    private final Tomato tomato;
+    private final Plant plant;
 
     private final List<String> field;
 
     private int cash;
 
 
-    public Game1(Tomato tomato, Cucumber cucumber, int cash, int fieldSize) {
+    public Game(Plant plant, int cash, int fieldSize) {
         this.cash = cash;
-        //this.plant = plant;
-        this.cucumber = cucumber;
-        this.tomato = tomato;
+        this.plant = plant;
         this.scanner = new Scanner(System.in);
         this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.field = new ArrayList<>();
@@ -37,48 +38,18 @@ public class Game1 {
         while (true) {
             out.println(field);
             out.println("YOUR CASH : " + cash);
-            out.println("C - plant Cucumber, T - plant Tomato, G - get Harvest");
-            switch (reader.readLine()){
-                case "C":
-                    out.println("Enter cell for your plant (1-8)");
-                    valid(scanner.nextLine()).ifPresent(fieldNumber -> {
-                        if (SIGN_EMPTY.equals(field.get(fieldNumber))) {
-                            field.set(fieldNumber, SIGN_CUCUMBER);
-                            execute(() -> getHarvestCucumber(fieldNumber), cucumber.getTime());
-                            cash -= cucumber.getSeedPrice();
-                        }
-                    });
-                    break;
-                case "T":
-                    out.println("Enter cell for your plant (1-8)");
-                    valid(scanner.nextLine()).ifPresent(fieldNumber -> {
-                        if (SIGN_EMPTY.equals(field.get(fieldNumber))) {
-                            field.set(fieldNumber, SIGN_TOMATO);
-                            execute(() -> getHarvestTomato(fieldNumber), tomato.getTime());
-                            cash -= tomato.getSeedPrice();
-                        }
-                    });
-                    break;
-                case "G":
-                    out.println("Enter cell for your plant (1-8)");
-                    valid(scanner.nextLine()).ifPresent(fieldNumber ->{
-                        if(SIGN_HARVEST_C.equals(field.get(fieldNumber))){
-                            field.set(fieldNumber, SIGN_EMPTY);
-                            cash += cucumber.getHarvestPrice();
-                        }
-                        else if((SIGN_HARVEST_T.equals(field.get(fieldNumber)))) {
-                            field.set(fieldNumber, SIGN_EMPTY);
-                            cash += tomato.getHarvestPrice();
-                        }
-                        else {
-                            out.println("NO ONE HARVEST HERE");
-                        }
-                    });
-                    break;
-
-                default:
-                    out.println("fff");
-            }
+            out.println("Enter cell for your plant (1-8)");
+            valid(scanner.nextLine()).ifPresent(fieldNumber -> {
+                if (SIGN_EMPTY.equals(field.get(fieldNumber))) {
+                    field.set(fieldNumber, plant.getName());
+                    execute(() -> getHarvest(fieldNumber), plant.getTime());
+                    cash -= plant.getSeedPrice();
+                }
+                else {
+                    field.set(fieldNumber, SIGN_EMPTY);
+                    cash += plant.getHarvestPrice();
+                }
+            });
         }
     }
 
@@ -91,11 +62,10 @@ public class Game1 {
             if (fieldNumber < 0 || fieldNumber >= field.size()) {
                 return printAndReturnOptional("OLOLO! YOU WERE ABROAD");
             }
-            if (cash < cucumber.getSeedPrice() || cash < tomato.getSeedPrice()) {
+            if (cash < plant.getSeedPrice()) {
                 return printAndReturnOptional("YOU HAVEN'T ENOUGH MONEY");
             }
-            if (SIGN_CUCUMBER.equals(field.get(fieldNumber)) ||
-                    SIGN_TOMATO.equals(field.get(fieldNumber))) {
+            if (SIGN_PLANT.equals(field.get(fieldNumber))) {
                 return printAndReturnOptional("OLOLO! FIELD NOT EMPTY");
             }
             return Optional.of(fieldNumber);
@@ -108,12 +78,29 @@ public class Game1 {
         return Optional.empty();
     }
 
-    public void getHarvestCucumber(int fieldNumber) {
-        field.set(fieldNumber, SIGN_HARVEST_C);
-        out.println(field);
+    public static ArrayList<Plant> readFromJsonFile(String fileName){
+        ArrayList<Plant> plantList = new ArrayList<>();
+        try{
+            String text = new String(Files.readAllBytes(Paths.get(fileName).toAbsolutePath()), StandardCharsets.UTF_8);
+
+            JSONObject obj = new JSONObject(text);
+            JSONArray arr = obj.getJSONArray("plants");
+
+            for (int i = 0; i < arr.length(); i++) {
+                String name = arr.getJSONObject(i).getString("name");
+                int seedPrice = Integer.parseInt(String.valueOf(arr.getJSONObject(i).getInt("seedPrice")));
+                int harvestPrice = Integer.parseInt(String.valueOf(arr.getJSONObject(i).getInt("harvestPrice")));
+                long time = Long.parseLong(String.valueOf(arr.getJSONObject(i).getLong("time")));
+                plantList.add(new Plant(name, seedPrice, harvestPrice, time));
+            }
+        } catch(Exception ex){
+            System.out.println(ex.toString());
+        }
+        return plantList;
     }
-    public void getHarvestTomato(int fieldNumber) {
-        field.set(fieldNumber, SIGN_HARVEST_T);
+
+    public void getHarvest(int fieldNumber) {
+        field.set(fieldNumber, SIGN_HARVEST);
         out.println(field);
     }
 
