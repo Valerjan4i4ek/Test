@@ -10,10 +10,7 @@ public class Farm {
         for(Plant plant : plantList){
             if(choose.equalsIgnoreCase(String.valueOf(plant.getName()))){
                 new Game(plant, 100, 8).start();
-            }
-            else {
-                System.out.println("THIS IS NOT A PLANT");
-            }
+            }         
         }
     }
 }
