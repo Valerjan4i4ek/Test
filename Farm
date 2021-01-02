@@ -1,14 +1,19 @@
+import java.io.*;
+import java.util.ArrayList;
+
 public class Farm {
-    public static void main(String[] args) {
-        Gson gson = new Gson();
-        String jsonC = "{\"name\": \"Cucumber\",\"seedPrice\": 10,\"harvestPrice\": 15,\"time\": 5}";
-        String jsonT = "{\"name\": \"Cucumber\",\"seedPrice\": 15,\"harvestPrice\": 20,\"time\": 5}";
-        Cucumber cucumber = gson.fromJson(jsonC, Cucumber.class);
-        Tomato tomato = gson.fromJson(jsonT, Tomato.class);
-
-        //Plant plant = new Plant("Cucumber", 10, 15, 5);
-        new Game1(tomato, cucumber, 100 , 8).start();
-
+    public static void main(String[] args) throws IOException {
+        ArrayList<Plant> plantList = Game.readFromJsonFile("src/plants.json");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("CHOOSE YOUR PLANT");
+        String choose = reader.readLine();
+        for(Plant plant : plantList){
+            if(choose.equalsIgnoreCase(String.valueOf(plant.getName()))){
+                new Game(plant, 100, 8).start();
+            }
+            else {
+                System.out.println("THIS IS NOT A PLANT");
+            }
+        }
     }
-
 }
