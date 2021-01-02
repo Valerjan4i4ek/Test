@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class Game {
+public class Game2 {
     final char SIGN_X = 'X';
     final char SIGN_O = 'O';
     final char SIGN_EMPTY = '_';
