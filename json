@@ -1,0 +1,18 @@
+{
+  "plants": [
+
+    {
+      "name": "Cucumber",
+      "seedPrice": 10,
+      "harvestPrice": 15,
+      "time": 5
+    },
+
+    {
+      "name": "Tomato",
+      "seedPrice": 20,
+      "harvestPrice": 30,
+      "time": 3
+    }
+  ]
+}
